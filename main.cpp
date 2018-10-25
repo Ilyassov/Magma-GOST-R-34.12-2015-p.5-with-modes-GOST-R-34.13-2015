@@ -1,5 +1,4 @@
 #include "headers.h"
-#include "vector.h"
 
 int main (int argc, char* argv[]) {
 
@@ -8,14 +7,12 @@ int main (int argc, char* argv[]) {
   //  std::cout << std::hex << text[0] << std::endl;
 
   size_t i = 0; //Итератор для текста
-  size_t j = 1; //Итератор для ключа
 
   unsigned int a0, a1;       //Значения текста на текущей итерации
   a1 = text[i] >> 32;         //Значение первой переменной для первого шага
   a0 = (text[i] << 32) >> 32; //Значение второй переменной для первого шага
   //std::cout << std::hex << a1 << std::endl;
   //std::cout << std::hex << a0 << std::endl;
-
 
   std::vector <unsigned int> key; //Вектор ключей
   key.push_back(0);               //Для удобства индексация начинается с 1
@@ -41,7 +38,11 @@ int main (int argc, char* argv[]) {
   std::cout << std::hex << key[7] << std::endl;
   std::cout << std::hex << key[8] << std::endl;*/
 
-//  G(key[j], a1, a0);
+  for (size_t j = 1; j < 32; j++) {
+    G(key[j], a1, a0);
+  }
+  text[i] = (( ((unsigned long)g(key[32], a0)) ^ a1) << 32) + a0;
+  std::cout << std::hex << text[i] << std::endl;
 
 ////////Считывание ключа с бинарного файла/////////
 /*  std::vector<int> Key;

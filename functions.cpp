@@ -9,8 +9,27 @@ void keyForm(std::vector <unsigned int> &Key) { //Развертывание к�
   }
 }
 
+unsigned int t(const unsigned int& a) {
+  unsigned int subVal[8];     //Массив для примениния нелинейного биективного преобразования
+  unsigned int highligh = 15; //Помогает выделять 4 бита
+  for (size_t i = 0; i < 8; i++) {
+    subVal[i] = (a & highligh) >> i * 4;
+    highligh = highligh << 4;
+  }
+  for (size_t i = 0; i < 8; i++) {
+    unsigned int tmp = subVal[i];
+    subVal[i] = pi[i][tmp];
+  }
+  unsigned int ans = 0;
+  for (size_t i = 0; i < 8; i++) {
+    ans += (subVal[i] << (4 * i));
+  }
+  return ans;
+}
+
 unsigned int g(const unsigned int& key, const unsigned int& a0) {
-  unsigned int Sum = _int_32(a0) + _int_32(key);
+  unsigned int Sum = t(key + a0);
+  return ((Sum << 11) + ((Sum & (2047 << 21)) >> 21));  //Делаем циклический сдвиг влево на 11
 }
 
 void G(const unsigned int& key, unsigned int& a1, unsigned int& a0) {
@@ -43,11 +62,4 @@ void keyDeploy(const std::string fileName, std::vector<int> &Key, std::vector<st
   keysForm(Key, Keys);
 }
 
-int _int_32(const std::vector<std::vector<int>> numb, int ind) {
-  int ans = 0;
-  for (int i = 0; i < 32; i++) {
-    ans = (ans << 1) + numb[ind][i];
-  }
-  return ans;
-}
 */
