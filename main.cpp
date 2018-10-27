@@ -3,16 +3,16 @@
 int main (int argc, char* argv[]) {
 
   std::vector <unsigned long> text;   //Вектор для хранения текста по 8 байт
-  text.push_back(0xfedcba9876543210); //Значение текста из примера
+  std::vector <unsigned long> ctext;   //Вектор для хранения текста по 8 байт
+  text.push_back(0x92def06b3c130a59); //Значение текста из примера
+  text.push_back(0xdb54c704f8189d20);
+  text.push_back(0x4a98fb2e67a8024c);
+  text.push_back(0x8912409b17b57e41);
+  ctext.push_back(0x92def06b3c130a59); //Значение текста из примера
+  ctext.push_back(0xdb54c704f8189d20);
+  ctext.push_back(0x4a98fb2e67a8024c);
+  ctext.push_back(0x8912409b17b57e41);
   //  std::cout << std::hex << text[0] << std::endl;
-
-  size_t i = 0; //Итератор для текста
-
-  unsigned int a0, a1;       //Значения текста на текущей итерации
-  a1 = text[i] >> 32;         //Значение первой переменной для первого шага
-  a0 = (text[i] << 32) >> 32; //Значение второй переменной для первого шага
-  //std::cout << std::hex << a1 << std::endl;
-  //std::cout << std::hex << a0 << std::endl;
 
   std::vector <unsigned int> key; //Вектор ключей
   key.push_back(0);               //Для удобства индексация начинается с 1
@@ -38,11 +38,39 @@ int main (int argc, char* argv[]) {
   std::cout << std::hex << key[7] << std::endl;
   std::cout << std::hex << key[8] << std::endl;*/
 
-  for (size_t j = 1; j < 32; j++) {
-    G(key[j], a1, a0);
+  std::vector <unsigned long> IV;   //Ключ для режима ctr
+  std::vector <unsigned long> CTR;
+  IV.push_back(0x1234567800000000);
+  CTR.push_back(0x1234567800000000);
+  for (size_t i = 0; i < text.size()-1; i++) {
+    CTR.push_back(CTR[i]+1);
   }
-  text[i] = (( ((unsigned long)g(key[32], a0)) ^ a1) << 32) + a0;
-  std::cout << std::hex << text[i] << std::endl;
+//  std::cout << std::hex << IV[0] << std::endl;
+
+/*  for (size_t i = 0; i < text.size(); i++) {  //Пример работы ctr
+    unsigned int a0, a1;       //Значения текста на текущей итерации
+    a1 = CTR[i] >> 32;         //Значение первой переменной для первого шага
+    a0 = (CTR[i] << 32) >> 32; //Значение второй переменной для первого шага
+    for (size_t j = 1; j < 32; j++) {
+      G(key[j], a1, a0);
+    }
+    ctext[i] = (( ((unsigned long)g(key[32], a0)) ^ a1) << 32) + a0;
+    ctext[i] = text[i] ^ ((ctext[i] >> (64-s)) << (64-s));
+    std::cout << "Text  " << std::hex << text[i] << " CText " << ctext[i] << std::endl;
+  }*/
+
+/*  for (size_t i = 0; i < text.size(); i++) {  //Пример работы ecb
+      unsigned int a0, a1;        //Значения текста на текущей итерации
+      a1 = ctext[i] >> 32;         //Значение первой переменной для первого шага
+      a0 = (ctext[i] << 32) >> 32; //Значение второй переменной для первого шага
+      //std::cout << std::hex << a1 << std::endl;
+      //std::cout << std::hex << a0 << std::endl;
+      for (size_t j = 1; j < 32; j++) {
+        G(key[j], a1, a0);
+    }
+    ctext[i] = (( ((unsigned long)g(key[32], a0)) ^ a1) << 32) + a0;
+    std::cout << std::hex << text[i] << " " << ctext[i] << std::endl;
+  }*/
 
 ////////Считывание ключа с бинарного файла/////////
 /*  std::vector<int> Key;

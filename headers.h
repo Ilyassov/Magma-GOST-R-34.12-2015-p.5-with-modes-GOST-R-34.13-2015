@@ -14,6 +14,9 @@ const std::vector <std::vector<int>> pi = { {12, 4, 6, 2, 10, 5, 11, 9, 14, 8, 1
                                             {8, 14, 2, 5, 6, 9, 1, 12, 15, 4, 11, 0, 13, 10, 3, 7},
                                             {1, 7, 14, 13, 0, 5, 8, 3, 4, 15, 10, 6, 9, 12, 11, 2} };
 
+const unsigned int s = 64;
+const unsigned int n = 64;
+
 void keyForm(std::vector <unsigned int> &Key);
 
 unsigned int t(const unsigned int& a);

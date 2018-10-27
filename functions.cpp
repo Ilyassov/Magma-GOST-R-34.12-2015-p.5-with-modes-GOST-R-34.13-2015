@@ -12,16 +12,16 @@ void keyForm(std::vector <unsigned int> &Key) { //Развертывание к�
 unsigned int t(const unsigned int& a) {
   unsigned int subVal[8];     //Массив для примениния нелинейного биективного преобразования
   unsigned int highligh = 15; //Помогает выделять 4 бита
-  for (size_t i = 0; i < 8; i++) {
+  for (size_t i = 0; i < 8; i++) {      //Разбиение текста по 4 бита
     subVal[i] = (a & highligh) >> i * 4;
     highligh = highligh << 4;
   }
-  for (size_t i = 0; i < 8; i++) {
+  for (size_t i = 0; i < 8; i++) { //нелинейное биективное преобразование
     unsigned int tmp = subVal[i];
     subVal[i] = pi[i][tmp];
   }
   unsigned int ans = 0;
-  for (size_t i = 0; i < 8; i++) {
+  for (size_t i = 0; i < 8; i++) { //Формирование текста по 4 битам
     ans += (subVal[i] << (4 * i));
   }
   return ans;
