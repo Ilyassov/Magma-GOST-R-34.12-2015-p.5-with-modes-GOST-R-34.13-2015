@@ -61,7 +61,9 @@ int main (int argc, char* argv[]) {
     std::cout << "ctext[" << std::dec << i << "]  " << std::hex << ctext[i] << std::endl;
     R.push_back(ctext[i]);
     ctext[i] = text[i] ^ ctext[i];
-    std::cout << "Text  " << std::hex << text[i] << " CText " << ctext[i] << std::endl;
+    etext[i] = (( ((unsigned long long)g(key[32], a0)) ^ a1) << 32) + a0;
+    etext[i] = ctext[i] ^ etext[i];
+    std::cout << "Text  " << std::hex << text[i] << " CText " << ctext[i] << " " << (text[i] == etext[i]) <<std::endl;
   }*/
 
 ////////////////////CTR///////////////////////////////////////
