@@ -2,9 +2,10 @@
 
 int main (int argc, char* argv[]) {
 
-  std::vector <unsigned long> text;   //Вектор для хранения текста по 8 байт
-  std::vector <unsigned long> ctext;   //Вектор для хранения текста по 8 байт
-  std::vector <unsigned long> etext;
+  std::vector <unsigned long long> text;   //Вектор для хранения текста по 8 байт
+  std::vector <unsigned long long> ctext;   //Вектор для хранения текста по 8 байт
+  std::vector <unsigned long long> etext;
+
 //  text.push_back(0xfedcba9876543210); //Значение текста из примера для ecb
   text.push_back(0x92def06b3c130a59); //Значение текста из примера для ctr
   text.push_back(0xdb54c704f8189d20);
@@ -38,9 +39,34 @@ int main (int argc, char* argv[]) {
   std::cout << std::hex << key[7] << std::endl;
   std::cout << std::hex << key[8] << std::endl;*/
 
+  std::vector <unsigned long long> IV;
+  IV.push_back(0x1234567890abcdef);
+  IV.push_back(0x234567890abcdef1);
+
+/////////////////////OFB//////////////////////////////////////
+/*  std::vector <unsigned long long> R;
+  R.push_back(IV[0]);
+  R.push_back(IV[1]);
+  //std::cout << std::hex << a1 << std::endl;
+  //std::cout << std::hex << a0 << std::endl;
+  for (size_t i = 0; i < text.size(); i++) {  //Пример работы orb
+    unsigned int a0, a1;        //Значения текста на текущей итерации
+    std::cout << "R[" << std::dec << i << "]  " << std::hex << R[i] << std::endl;
+    a1 = R[i] >> 32;         //Значение первой переменной для первого шага
+    a0 = (R[i] << 32) >> 32; //Значение второй переменной для первого шага
+    for (size_t j = 1; j < 32; j++) {
+      G(key[j], a1, a0);
+    }
+    ctext[i] = (( ((unsigned long long)g(key[32], a0)) ^ a1) << 32) + a0;
+    std::cout << "ctext[" << std::dec << i << "]  " << std::hex << ctext[i] << std::endl;
+    R.push_back(ctext[i]);
+    ctext[i] = text[i] ^ ctext[i];
+    std::cout << "Text  " << std::hex << text[i] << " CText " << ctext[i] << std::endl;
+  }*/
+
 ////////////////////CTR///////////////////////////////////////
-/*  std::vector <unsigned long> IV;   //Ключ для режима ctr
-  std::vector <unsigned long> CTR;
+/*std::vector <unsigned long long> IV;   //Ключ для режима ctr
+  std::vector <unsigned long long> CTR;
   IV.push_back(0x1234567800000000);
   CTR.push_back(0x1234567800000000);
   for (size_t i = 0; i < text.size()-1; i++) {
@@ -55,9 +81,9 @@ int main (int argc, char* argv[]) {
     for (size_t j = 1; j < 32; j++) {
       G(key[j], a1, a0);
     }
-    ctext[i] = (( ((unsigned long)g(key[32], a0)) ^ a1) << 32) + a0;
+    ctext[i] = (( ((unsigned long long)g(key[32], a0)) ^ a1) << 32) + a0;
     ctext[i] = text[i] ^ ((ctext[i] >> (64-s)) << (64-s));
-    etext[i] = (( ((unsigned long)g(key[32], a0)) ^ a1) << 32) + a0;
+    etext[i] = (( ((unsigned long long)g(key[32], a0)) ^ a1) << 32) + a0;
     etext[i] = ctext[i] ^ ((etext[i] >> (64-s)) << (64-s));
     std::cout << "Text  " << std::hex << text[i] << " CText " << ctext[i] << " " << (text[i] == etext[i]) << std::endl;
   }*/
@@ -72,7 +98,7 @@ int main (int argc, char* argv[]) {
       for (size_t j = 1; j < 32; j++) {
         G(key[j], a1, a0);
     }
-    ctext[i] = (( ((unsigned long)g(key[32], a0)) ^ a1) << 32) + a0;
+    ctext[i] = (( ((unsigned long long)g(key[32], a0)) ^ a1) << 32) + a0;
     std::cout << std::hex << text[i] << " " << ctext[i] << std::endl;
   }*/
 
