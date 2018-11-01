@@ -26,6 +26,7 @@ unsigned int g(const unsigned int& key, const unsigned int& a0);
 void G(const unsigned int& key, unsigned int& a1, unsigned int& a0);
 unsigned long long Gl(const unsigned int& key, unsigned int& a1, unsigned int& a0);
 unsigned long long enc(const std::vector <unsigned int>& key, unsigned int& a1, unsigned int& a0);
+unsigned long long dec(const std::vector <unsigned int>& key, unsigned int& a1, unsigned int& a0);
 
 /*void keyRead(std::string fileName, std::vector<int>& Key);
 void keyDeploy(const std::string fileName, std::vector<int> &Key, std::vector<std::vector<int> >& Keys);

@@ -7,7 +7,8 @@ int main (int argc, char* argv[]) {
   std::vector <unsigned long long> etext;
 
 //  text.push_back(0xfedcba9876543210); //Значение текста из примера для ecb
-  text.push_back(0x92def06b3c130a59); //Значение текста из примера для ctr
+  text.push_back(0xfedcba9876543210);
+  text.push_back(0x92def06b3c130a59);
   text.push_back(0xdb54c704f8189d20);
   text.push_back(0x4a98fb2e67a8024c);
   text.push_back(0x8912409b17b57e41);
@@ -55,10 +56,15 @@ int main (int argc, char* argv[]) {
     unsigned int a0, a1;        //Значения текста на текущей итерации
     a1 = (text[i] ^ R[i]) >> 32;         //Значение первой переменной для первого шага
     a0 = ((text[i] ^ R[i]) << 32) >> 32; //Значение второй переменной для первого шага
-    std::cout << std::hex << a1 << a0 << std::endl;
+    std::cout << "a1 a0\t\t" << std::hex << a1 << a0 << std::endl;
     ctext[i] = enc(key, a1, a0);
+    a1 = (ctext[i]) >> 32;         //Значение первой переменной для первого шага
+    a0 = ((ctext[i]) << 32) >> 32; //Значение второй переменной для первого шага
+    std::cout << "a1 a0\t\t" << std::hex << a1 << a0 << std::endl;
+    etext[i] = (dec(key, a1, a0)) ^ R[i];
+    std::cout << "etext[i]\t" << std::hex << etext[i] << std::endl;
     R.push_back(ctext[i]);
-    std::cout << "Text  " << std::hex << text[i] << " CText " << ctext[i] << std::endl;
+    std::cout << "Text\t\t" << std::hex << text[i] << "\nCText\t\t" << ctext[i] << "\n\t\t\t" << (etext[i] == text[i]) << std::endl;
   }*/
 
 /////////////////////OFB//////////////////////////////////////

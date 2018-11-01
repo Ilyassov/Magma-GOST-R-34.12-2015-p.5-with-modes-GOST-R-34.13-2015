@@ -49,6 +49,13 @@ unsigned long long enc(const std::vector <unsigned int>& key, unsigned int& a1, 
   return Gl(key[32], a1, a0);
 }
 
+unsigned long long dec(const std::vector <unsigned int>& key, unsigned int& a1, unsigned int& a0) {
+  for (size_t j = 32; j > 1; j--) {
+    G(key[j], a1, a0);
+  }
+  return Gl(key[1], a1, a0);
+}
+
 /*void keyRead(std::string fileName, std::vector<int>& Key) {
   char ch;
   std::ifstream File(fileName, std::ios::binary);
