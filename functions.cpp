@@ -38,9 +38,16 @@ void G(const unsigned int& key, unsigned int& a1, unsigned int& a0) {
   a0 = g(key, a0) ^ A1;
 }
 
+unsigned long long Gl(const unsigned int& key, unsigned int& a1, unsigned int& a0) {
+  return ((( ((unsigned long long)g(key, a0)) ^ a1) << 32) + a0);
+}
 
-
-
+unsigned long long enc(const std::vector <unsigned int>& key, unsigned int& a1, unsigned int& a0) {
+  for (size_t j = 1; j < 32; j++) {
+    G(key[j], a1, a0);
+  }
+  return Gl(key[32], a1, a0);
+}
 
 /*void keyRead(std::string fileName, std::vector<int>& Key) {
   char ch;

@@ -42,6 +42,24 @@ int main (int argc, char* argv[]) {
   std::vector <unsigned long long> IV;
   IV.push_back(0x1234567890abcdef);
   IV.push_back(0x234567890abcdef1);
+  IV.push_back(0x34567890abcdef12);
+
+/////////////////////CBC//////////////////////////////////////
+  std::vector <unsigned long long> R;
+  R.push_back(IV[0]);
+  R.push_back(IV[1]);
+  R.push_back(IV[2]);
+  //std::cout << std::hex << a1 << std::endl;
+  //std::cout << std::hex << a0 << std::endl;
+  for (size_t i = 0; i < text.size(); i++) {  //Пример работы orb
+    unsigned int a0, a1;        //Значения текста на текущей итерации
+    a1 = (text[i] ^ R[i]) >> 32;         //Значение первой переменной для первого шага
+    a0 = ((text[i] ^ R[i]) << 32) >> 32; //Значение второй переменной для первого шага
+    std::cout << std::hex << a1 << a0 << std::endl;
+    ctext[i] = enc(key, a1, a0);
+    R.push_back(ctext[i]);
+    std::cout << "Text  " << std::hex << text[i] << " CText " << ctext[i] << std::endl;
+  }
 
 /////////////////////OFB//////////////////////////////////////
 /*  std::vector <unsigned long long> R;
@@ -51,14 +69,12 @@ int main (int argc, char* argv[]) {
   //std::cout << std::hex << a0 << std::endl;
   for (size_t i = 0; i < text.size(); i++) {  //Пример работы orb
     unsigned int a0, a1;        //Значения текста на текущей итерации
-    std::cout << "R[" << std::dec << i << "]  " << std::hex << R[i] << std::endl;
     a1 = R[i] >> 32;         //Значение первой переменной для первого шага
     a0 = (R[i] << 32) >> 32; //Значение второй переменной для первого шага
     for (size_t j = 1; j < 32; j++) {
       G(key[j], a1, a0);
     }
     ctext[i] = (( ((unsigned long long)g(key[32], a0)) ^ a1) << 32) + a0;
-    std::cout << "ctext[" << std::dec << i << "]  " << std::hex << ctext[i] << std::endl;
     R.push_back(ctext[i]);
     ctext[i] = text[i] ^ ctext[i];
     etext[i] = (( ((unsigned long long)g(key[32], a0)) ^ a1) << 32) + a0;

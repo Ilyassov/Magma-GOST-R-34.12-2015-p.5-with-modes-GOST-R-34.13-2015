@@ -16,7 +16,7 @@ const std::vector <std::vector<int>> pi = { {12, 4, 6, 2, 10, 5, 11, 9, 14, 8, 1
 
 const unsigned int s = 64;
 const unsigned int n = 64;
-const unsigned int z = 2;
+const unsigned int z = 3;
 const unsigned int m = z * n;
 
 void keyForm(std::vector <unsigned int> &Key);
@@ -24,6 +24,8 @@ void keyForm(std::vector <unsigned int> &Key);
 unsigned int t(const unsigned int& a);
 unsigned int g(const unsigned int& key, const unsigned int& a0);
 void G(const unsigned int& key, unsigned int& a1, unsigned int& a0);
+unsigned long long Gl(const unsigned int& key, unsigned int& a1, unsigned int& a0);
+unsigned long long enc(const std::vector <unsigned int>& key, unsigned int& a1, unsigned int& a0);
 
 /*void keyRead(std::string fileName, std::vector<int>& Key);
 void keyDeploy(const std::string fileName, std::vector<int> &Key, std::vector<std::vector<int> >& Keys);
