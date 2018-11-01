@@ -45,7 +45,7 @@ int main (int argc, char* argv[]) {
   IV.push_back(0x34567890abcdef12);
 
 /////////////////////CBC//////////////////////////////////////
-  std::vector <unsigned long long> R;
+/*  std::vector <unsigned long long> R;
   R.push_back(IV[0]);
   R.push_back(IV[1]);
   R.push_back(IV[2]);
@@ -59,7 +59,7 @@ int main (int argc, char* argv[]) {
     ctext[i] = enc(key, a1, a0);
     R.push_back(ctext[i]);
     std::cout << "Text  " << std::hex << text[i] << " CText " << ctext[i] << std::endl;
-  }
+  }*/
 
 /////////////////////OFB//////////////////////////////////////
 /*  std::vector <unsigned long long> R;
