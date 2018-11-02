@@ -44,8 +44,48 @@ int main (int argc, char* argv[]) {
   IV.push_back(0x234567890abcdef1);
 //  IV.push_back(0x34567890abcdef12);
 
+/////////////////////MAC//////////////////////////////////////
+/*std::vector <unsigned long long> R;
+  std::vector <unsigned long long> C;
+  C.push_back(0);
+  R.push_back(0x2fa2cd99a1290a12);
+  unsigned int text_size_1 = text.size()-1; //Завел чтобы не считать по нескольку раз
+  unsigned int a0 = 0;
+  unsigned int a1 = 0;        //Значения текста на текущей итерации
+  unsigned long long K1, K2, Kl;
+  R[0] = enc(key, a1, a0);
+  K1 = R[0] << 1;
+  if (((R[0] << 1) >> 1) != R[0]) {
+    K1 = K1 ^ 0x000000000000001b;
+  }
+  K2 = K1 << 1;
+  if (((K1 << 1) >> 1) != R[0]) {
+    K2 = K1 ^ 0x000000000000001b;
+  }
+  Kl = K1;  //Так как длин совпадает с n, а вообще по другому
+  std::cout << "R\t\t" << std::hex << R[0] << std::endl;
+  std::cout << "K1\t\t" << std::hex << K1 << std::endl;
+  std::cout << "K2\t\t" << std::hex << K2 << std::endl;
+  for (size_t i = 0; i < text_size_1; i++) {  //Пример работы orb
+    unsigned int a0, a1;        //Значения текста на текущей итерации
+    std::cout << "Text\t\t" << std::hex << text[i] << std::endl;
+    std::cout << "Input\t\t" << std::hex << (text[i] ^ C[i]) << std::endl;
+    a1 = (text[i] ^ C[i]) >> 32;         //Значение первой переменной для первого шага
+    a0 = ((text[i] ^ C[i]) << 32) >> 32; //Значение второй переменной для первого шага
+    ctext[i] = enc(key, a1, a0);
+    C.push_back(ctext[i]);
+    std::cout << "Output\t\t" << std::hex << ctext[i] << std::endl;
+  }
+  unsigned long long MAC_inp = text[text_size_1] ^ C[text_size_1] ^ Kl; // Входные переменные для кодирования в МАС
+  std::cout << "Text\t\t" << std::hex << text[text_size_1] << std::endl;
+  std::cout << "Input\t\t" << std::hex << MAC_inp << std::endl;
+  a1 = MAC_inp >> 32;
+  a0 = (MAC_inp << 32) >> 32;
+  unsigned int MAC = (unsigned int)(enc(key, a1, a0) >> 32);
+  std::cout << "MAC\t\t" << std::hex << MAC << std::endl;*/
+
 /////////////////////CFB//////////////////////////////////////
-/*  std::vector <unsigned long long> R;
+/*std::vector <unsigned long long> R;
   R.push_back(IV[0]);
   R.push_back(IV[1]);
   unsigned long long temp = 0;
