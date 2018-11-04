@@ -9,6 +9,8 @@ void keyForm(std::vector <unsigned int> &Key) { //Развертывание к�
   }
 }
 
+/////////////////////////////Шифрование////////////////////////////////////////
+
 unsigned int t(const unsigned int& a) {
   unsigned int subVal[8];     //Массив для примениния нелинейного биективного преобразования
   unsigned int highligh = 15; //Помогает выделять 4 бита
@@ -56,6 +58,11 @@ unsigned long long dec(const std::vector <unsigned int>& key, unsigned int& a1, 
   return Gl(key[1], a1, a0);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////Провка параметров командной строки////////////////////
+
 bool there_is(const std::string flag, unsigned char &pos) {
   for (size_t i = 0; i < flags.size(); i++) {
     if (flags[i] == flag) {
@@ -66,23 +73,71 @@ bool there_is(const std::string flag, unsigned char &pos) {
   return false;
 }
 
-void encount_flags_fill(int argc, char *argv[], std::vector <char> &encount_flags) {
+void c_fl_fill(const int argc, const char *argv[], std::vector <char> &c_fl) {
   unsigned char pos = 0;
   for (int i = 1; i < argc; i++) {
     if (there_is(argv[i], pos)) {
-      encount_flags[pos] += flag_val[pos];
+      c_fl[pos] += flag_val[pos];
     }
   }
 }
 
-void check_args(int argc, char *argv[], std::vector <char> &encount_flags) {
-  encount_flags_fill(argc, argv, encount_flags);
-/*  for (size_t i = 0; i < 14; i++) {
-    std::cout << std::dec << char(encount_flags[i] + '0') << std::endl;
-  }*/
-  
+void check_number_flags(const int argc, const char *argv[], const std::vector <char> &c_fl) {
+  const unsigned char modes_sum = c_fl[2] + c_fl[3] + c_fl[4] + c_fl[5] + c_fl[6] + c_fl[7]; // Сумма количества встречающийхся режимов,
+  const unsigned char help_sum = c_fl[0] + c_fl[1];                                          // флагов на помощь,
+  unsigned char count_flags_sum = 0;                                                   // всех флагов
+  for (size_t i = 0; i < 14; i++) {
+    count_flags_sum += c_fl[i];
+  }
+  if (count_flags_sum != argc-1) {
+    throw "Wrong number of arguments!\n";
+  }
+  if (help_sum > 1) {
+    throw "Use -h or --help! Not both!\n";
+  } else if (((modes_sum + help_sum) == 0) || ((modes_sum + help_sum) > 1)) {
+    throw "Wrong mode!\n";
+  } else if ((c_fl[8] + c_fl[9]) > 1) {
+    throw "You can not encrypt and decrypt at the same time!\n";
+  }
 }
 
+void check_file_flag_pos(const int argc, const char *argv[]) {
+  for (int i = 1; i < argc; i++) {
+    if ((argv[i] == flags[10] || argv[i] == flags[11] || argv[i] == flags[12] || argv[i] == flags[13]) && (i == argc-1)) {
+      throw "File path must be after file flag!\n";
+    }
+  }
+}
+
+void is_there_k(const int argc, const char *argv[]) {
+  bool k_flag = true;
+  for (int i = 1; i < argc; i++) {
+    if (argv[i] == flags[10]) {
+      k_flag = false;
+    }
+  }
+  if (k_flag) {
+    throw "No key found!\n";
+  }
+}
+
+void check_enc_dec(const int argc, const char *argv[], const std::vector <char> &c_fl) {
+  if ((c_fl[8] + c_fl[9]) == 0) {
+    throw "Choose mode : encrypt or decrypt!\n";
+  } else if ((c_fl[7] + c_fl[9]) > 1) {
+    throw "Mac mode has no encryption!\n";
+  }
+}
+
+void check_args(const int argc, const char *argv[], std::vector <char> &c_fl) {
+  c_fl_fill(argc, argv, c_fl);
+  check_number_flags(argc, argv, c_fl);
+  check_file_flag_pos(argc, argv);
+  is_there_k(argc, argv);
+  check_enc_dec(argc, argv, c_fl);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 
 /*void keyRead(std::string fileName, std::vector<int>& Key) {
   char ch;

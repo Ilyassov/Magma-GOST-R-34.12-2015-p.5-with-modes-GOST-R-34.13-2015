@@ -1,16 +1,16 @@
 CC=g++
 CFLAGS=-c -Wall
 
-all: main
+all: magma
 
-main:	main.o functions.o
-	$(CC) main.cpp functions.cpp -o main
+magma:	magma.o functions.o
+	$(CC) magma.cpp functions.cpp -o magma
 
-main.o:	main.cpp headers.h
-	$(CC) $(CFLAGS) -c main.cpp
+magma.o:	magma.cpp headers.h
+	$(CC) $(CFLAGS) -c magma.cpp
 
 functions.o: functions.cpp headers.h
 	$(CC) $(CFLAGS) -c functions.cpp
 
 clean:
-	rm -rf *.o main
+	rm -rf *.o magma

@@ -33,9 +33,17 @@ unsigned long long Gl(const unsigned int& key, unsigned int& a1, unsigned int& a
 unsigned long long enc(const std::vector <unsigned int>& key, unsigned int& a1, unsigned int& a0);
 unsigned long long dec(const std::vector <unsigned int>& key, unsigned int& a1, unsigned int& a0);
 
-bool there_is(const std::string flag, unsigned char &pos);
-void encount_flags_fill(int argc, char *argv[], std::vector <char> &encount_flags);
-void check_args(int argc, char *argv[], std::vector <char> &encount_flags);
+
+bool there_is(const std::string flag, unsigned char &pos);  //Проверяет на наличие флага и изменяет pos
+                                                            //на его позицию в этом случае
+void c_fl_fill(const int argc, const char *argv[], std::vector <char> &c_fl); //Заполняет c_fl количеством появления флагов
+void check_number_flags(const int argc, const char *argv[], const std::vector <char> &c_fl);  //Проверяет аргументы командной строки
+                                                                                        //по их количеству
+void check_file_flag_pos(const int argc, const char *argv[]);//Проверяет позицию файлового флага
+                                                              //Если в конце, то ошибка
+void check_enc_dec(const int argc, const char *argv[], const std::vector <char> &c_fl);
+void check_args(const int argc, const char *argv[], std::vector <char> &c_fl);  //Проверяет входные аргументы командной строки
+
 
 /*void keyRead(std::string fileName, std::vector<int>& Key);
 void keyDeploy(const std::string fileName, std::vector<int> &Key, std::vector<std::vector<int> >& Keys);

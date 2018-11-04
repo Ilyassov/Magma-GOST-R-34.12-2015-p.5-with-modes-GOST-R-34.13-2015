@@ -1,9 +1,9 @@
 #include "headers.h"
 
-int main (int argc, char* argv[]) {
+int main (const int argc, const char* argv[]) {
   try {
-    std::vector <char> encount_flags(14, 0);
-    check_args(argc, argv, encount_flags);
+    std::vector <char> c_fl(14, 0);         //Количество каждого флага в вызове функции
+    check_args(argc, argv, c_fl);
     std::vector <unsigned long long> text;  //Вектор для хранения текста по 8 байт
     std::vector <unsigned long long> ctext; //Вектор для хранения зашифрованного текста по 8 байт
     std::vector <unsigned long long> etext; //Вектор для хранения расшифрованного текста по 8 байт
@@ -163,6 +163,12 @@ int main (int argc, char* argv[]) {
       } while ((ch != '\n') && (ch != EOF) && (int(ch) != '\r'));
       File.close();*/
     //////////////////////////////////////////////////////////////
+  }
+  catch (const char * S) {
+    std::cerr << S << help;
+  }
+  catch (const std::string S) {
+    std::cerr << S;
   }
   catch(...) {
     std::cerr << "Unknown error!\n";
