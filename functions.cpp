@@ -56,6 +56,34 @@ unsigned long long dec(const std::vector <unsigned int>& key, unsigned int& a1, 
   return Gl(key[1], a1, a0);
 }
 
+bool there_is(const std::string flag, unsigned char &pos) {
+  for (size_t i = 0; i < flags.size(); i++) {
+    if (flags[i] == flag) {
+      pos = i;
+      return true;
+    }
+  }
+  return false;
+}
+
+void encount_flags_fill(int argc, char *argv[], std::vector <char> &encount_flags) {
+  unsigned char pos = 0;
+  for (int i = 1; i < argc; i++) {
+    if (there_is(argv[i], pos)) {
+      encount_flags[pos] += flag_val[pos];
+    }
+  }
+}
+
+void check_args(int argc, char *argv[], std::vector <char> &encount_flags) {
+  encount_flags_fill(argc, argv, encount_flags);
+/*  for (size_t i = 0; i < 14; i++) {
+    std::cout << std::dec << char(encount_flags[i] + '0') << std::endl;
+  }*/
+  
+}
+
+
 /*void keyRead(std::string fileName, std::vector<int>& Key) {
   char ch;
   std::ifstream File(fileName, std::ios::binary);

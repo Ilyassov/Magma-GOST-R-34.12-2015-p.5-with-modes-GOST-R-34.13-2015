@@ -14,6 +14,11 @@ const std::vector <std::vector<int>> pi = { {12, 4, 6, 2, 10, 5, 11, 9, 14, 8, 1
                                             {8, 14, 2, 5, 6, 9, 1, 12, 15, 4, 11, 0, 13, 10, 3, 7},
                                             {1, 7, 14, 13, 0, 5, 8, 3, 4, 15, 10, 6, 9, 12, 11, 2} };
 
+const std::vector <std::string> flags = {"-h", "--help", "--ecb", "--ctr", "--ofb", "--cbc", "--cfb", "--mac",
+                                    "-e", "-d", "-k", "-v", "-i", "-o"};
+const std::vector <char> flag_val = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2};
+const std::string help = "magma [-h|--help]\nmagma [--ecb|--ctr|--ofb|--cbc|--cfb] {-e|-d} -k <key file> [options]\nmagma --mac -k <key file> [options]\n";
+
 const unsigned int s = 64;
 const unsigned int n = 64;
 const unsigned int z = 2;
@@ -27,6 +32,10 @@ void G(const unsigned int& key, unsigned int& a1, unsigned int& a0);
 unsigned long long Gl(const unsigned int& key, unsigned int& a1, unsigned int& a0);
 unsigned long long enc(const std::vector <unsigned int>& key, unsigned int& a1, unsigned int& a0);
 unsigned long long dec(const std::vector <unsigned int>& key, unsigned int& a1, unsigned int& a0);
+
+bool there_is(const std::string flag, unsigned char &pos);
+void encount_flags_fill(int argc, char *argv[], std::vector <char> &encount_flags);
+void check_args(int argc, char *argv[], std::vector <char> &encount_flags);
 
 /*void keyRead(std::string fileName, std::vector<int>& Key);
 void keyDeploy(const std::string fileName, std::vector<int> &Key, std::vector<std::vector<int> >& Keys);
