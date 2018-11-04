@@ -1,13 +1,23 @@
 #include "headers.h"
 
-int main (const int argc, const char* argv[]) {
+int main (int argc, char *argv[]) {
   try {
     std::vector <char> c_fl(14, 0);         //Количество каждого флага в вызове функции
-    check_args(argc, argv, c_fl);
+//    check_args(argc, argv, c_fl);
     std::vector <unsigned long long> text;  //Вектор для хранения текста по 8 байт
     std::vector <unsigned long long> ctext; //Вектор для хранения зашифрованного текста по 8 байт
     std::vector <unsigned long long> etext; //Вектор для хранения расшифрованного текста по 8 байт
+    unsigned int pos;
     std::vector <unsigned int> key;         //Вектор ключей
+    key.push_back(0);
+    keyProcess(pos, key, argv);
+
+    char *read_ptr = NULL;
+    if ((pos = search(argv, "-v"))) {
+      read_ptr = argv[pos];
+    }
+    FILE * ptrFile = freopen(read_ptr, "rb", stdin);
+    //-i <input file> – входной файл. По умолчанию читать с stdin до EOF;
 //    ctext.resize(text.size());
 //    etext.resize(ctext.size());
 

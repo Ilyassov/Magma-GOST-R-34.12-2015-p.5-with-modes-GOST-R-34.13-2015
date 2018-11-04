@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 
 const std::vector <std::vector<int>> pi = { {12, 4, 6, 2, 10, 5, 11, 9, 14, 8, 13, 7, 0, 3, 15, 1},
                                             {6, 8, 2, 3, 9, 10, 5, 12, 1, 14, 4, 7, 11, 13, 0, 15},
@@ -36,17 +37,15 @@ unsigned long long dec(const std::vector <unsigned int>& key, unsigned int& a1, 
 
 bool there_is(const std::string flag, unsigned char &pos);  //Проверяет на наличие флага и изменяет pos
                                                             //на его позицию в этом случае
-void c_fl_fill(const int argc, const char *argv[], std::vector <char> &c_fl); //Заполняет c_fl количеством появления флагов
-void check_number_flags(const int argc, const char *argv[], const std::vector <char> &c_fl);  //Проверяет аргументы командной строки
+void c_fl_fill(int argc, char *argv[], std::vector <char> &c_fl); //Заполняет c_fl количеством появления флагов
+void check_number_flags(int argc, char *argv[], const std::vector <char> &c_fl);  //Проверяет аргументы командной строки
                                                                                         //по их количеству
-void check_file_flag_pos(const int argc, const char *argv[]);//Проверяет позицию файлового флага
+void check_file_flag_pos(int argc, char *argv[]);//Проверяет позицию файлового флага
                                                               //Если в конце, то ошибка
-void check_enc_dec(const int argc, const char *argv[], const std::vector <char> &c_fl);
-void check_args(const int argc, const char *argv[], std::vector <char> &c_fl);  //Проверяет входные аргументы командной строки
+void check_enc_dec(int argc, char *argv[], const std::vector <char> &c_fl);
+void check_args(int argc, char *argv[], std::vector <char> &c_fl);  //Проверяет входные аргументы командной строки
 
-
-/*void keyRead(std::string fileName, std::vector<int>& Key);
-void keyDeploy(const std::string fileName, std::vector<int> &Key, std::vector<std::vector<int> >& Keys);
-
-int _int_32(const std::vector<std::vector<int>> numb, int ind);
-*/
+unsigned int search(char* argv[], const std::string &flag);
+void keySizeCheck(const char* file);
+void keyRead(std::vector <unsigned int> &key, const char* file);  //Считывание ключа
+void keyProcess(unsigned int &pos, std::vector <unsigned int> &key, char* argv[]);

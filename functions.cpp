@@ -61,7 +61,7 @@ unsigned long long dec(const std::vector <unsigned int>& key, unsigned int& a1, 
 ///////////////////////////////////////////////////////////////////////////////
 
 
-/////////////////////////Провка параметров командной строки////////////////////
+///////////////////////Проверка параметров командной строки////////////////////
 
 bool there_is(const std::string flag, unsigned char &pos) {
   for (size_t i = 0; i < flags.size(); i++) {
@@ -73,7 +73,7 @@ bool there_is(const std::string flag, unsigned char &pos) {
   return false;
 }
 
-void c_fl_fill(const int argc, const char *argv[], std::vector <char> &c_fl) {
+void c_fl_fill(int argc, char *argv[], std::vector <char> &c_fl) {
   unsigned char pos = 0;
   for (int i = 1; i < argc; i++) {
     if (there_is(argv[i], pos)) {
@@ -82,7 +82,7 @@ void c_fl_fill(const int argc, const char *argv[], std::vector <char> &c_fl) {
   }
 }
 
-void check_number_flags(const int argc, const char *argv[], const std::vector <char> &c_fl) {
+void check_number_flags(int argc, char *argv[], const std::vector <char> &c_fl) {
   const unsigned char modes_sum = c_fl[2] + c_fl[3] + c_fl[4] + c_fl[5] + c_fl[6] + c_fl[7]; // Сумма количества встречающийхся режимов,
   const unsigned char help_sum = c_fl[0] + c_fl[1];                                          // флагов на помощь,
   unsigned char count_flags_sum = 0;                                                   // всех флагов
@@ -101,7 +101,7 @@ void check_number_flags(const int argc, const char *argv[], const std::vector <c
   }
 }
 
-void check_file_flag_pos(const int argc, const char *argv[]) {
+void check_file_flag_pos(int argc, char *argv[]) {
   for (int i = 1; i < argc; i++) {
     if ((argv[i] == flags[10] || argv[i] == flags[11] || argv[i] == flags[12] || argv[i] == flags[13]) && (i == argc-1)) {
       throw "File path must be after file flag!\n";
@@ -109,7 +109,7 @@ void check_file_flag_pos(const int argc, const char *argv[]) {
   }
 }
 
-void is_there_k(const int argc, const char *argv[]) {
+void is_there_k(int argc, char *argv[]) {
   bool k_flag = true;
   for (int i = 1; i < argc; i++) {
     if (argv[i] == flags[10]) {
@@ -121,42 +121,64 @@ void is_there_k(const int argc, const char *argv[]) {
   }
 }
 
-void check_enc_dec(const int argc, const char *argv[], const std::vector <char> &c_fl) {
+void check_enc_dec(int argc, char *argv[], const std::vector <char> &c_fl) {
   if ((c_fl[8] + c_fl[9]) == 0) {
     throw "Choose mode : encrypt or decrypt!\n";
   } else if ((c_fl[7] + c_fl[9]) > 1) {
     throw "Mac mode has no encryption!\n";
+  } else if (c_fl[2] + c_fl[7] + c_fl[11] > 1) {
+    throw "IV not needed in ecb or mac modes!\n";
   }
 }
 
-void check_args(const int argc, const char *argv[], std::vector <char> &c_fl) {
+void check_args(int argc, char *argv[], std::vector <char> &c_fl) {
   c_fl_fill(argc, argv, c_fl);
   check_number_flags(argc, argv, c_fl);
   check_file_flag_pos(argc, argv);
   is_there_k(argc, argv);
   check_enc_dec(argc, argv, c_fl);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 
-/*void keyRead(std::string fileName, std::vector<int>& Key) {
-  char ch;
-  std::ifstream File(fileName, std::ios::binary);
-  for (int j = 0; j < 32; j++) {
-    File.read((char*)&ch, sizeof(ch));
-    for (unsigned int i = 0; i < 8; i++) {
-      Key.push_back((ch & (128 >> i)) != 0);
+unsigned int search(char* argv[], const std::string &flag) {
+  for (size_t i = 1; i < 14; i++) {
+    if (argv[i] == flag) {
+      return i+1;
     }
   }
-  File.close();
-}
-*/
-
-
-/*
-void keyDeploy(const std::string fileName, std::vector<int> &Key, std::vector<std::vector<int> >& Keys) {
-  keyRead(fileName, Key);
-  keysForm(Key, Keys);
+  return 0;
 }
 
-*/
+void keySizeCheck(const char* file) {
+  std::ifstream in(file, std::ifstream::binary);
+  if (in) {
+    in.seekg (0, in.end);
+    unsigned int length = in.tellg();
+    in.seekg (0, in.beg);
+    in.close();
+    if (length != 32) {
+      throw "Wrong key size!\n";
+    }
+  } else {
+    throw "File not opened!\n";
+  }
+}
+
+void keyRead(std::vector <unsigned int> &key, const char* file) {
+  keySizeCheck(file);
+  unsigned int buff;
+  std::ifstream in(file, std::ios::binary);
+  for (size_t i = 0; i < 8; i++) {
+    in.read((char*)&buff, sizeof(buff)); //Перенос байтов из файла в buff
+    key.push_back(buff);
+  }
+  in.close();
+}
+
+void keyProcess(unsigned int &pos, std::vector <unsigned int> &key, char* argv[]) {
+  if ((pos = search(argv, "-k"))) {
+    keyRead(key, argv[pos]);
+  } else {
+    throw "No key flag found!\n";
+  }
+}
