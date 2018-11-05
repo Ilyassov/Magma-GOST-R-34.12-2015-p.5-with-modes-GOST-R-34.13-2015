@@ -49,5 +49,114 @@ void keySizeCheck(const char* file);
 void keyRead(std::vector <unsigned int> &key, const char* file);  //Считывание ключа
 void keyProcess(unsigned int &pos, std::vector <unsigned int> &key, char* argv[]);
 
-void full_init_text(const char *read_ptr, std::vector <unsigned char> &init_text);
-void input_redirect(char *(&read_ptr), unsigned int &pos, char *argv[]);
+void full_init_text(const char *read_ptr, std::vector <unsigned char> &init_text); //Выполняет побайтовое бинарное считывание
+void input_redirect(char *(&read_ptr), unsigned int &pos, char *argv[]);//Если нужно перенаправляет поток входа на файл
+unsigned long long swap(unsigned long long temp); //Меняет байты местами в правильный порядок
+void full_text(const std::vector <unsigned char> &init_text, std::vector <unsigned long long> &text); //Заполняет текст по байтам
+                                                                                                    //находящимся в init_text
+void zero_supplement(char *argv[], std::vector <unsigned char> &init_text); //Дополнение нулями
+void one_supplement(char *argv[], std::vector <unsigned char> &init_text);  //Дополнение единицей и нулями
+void smart_supplement(char *argv[], std::vector <unsigned char> &init_text);//Дополнение в зависимости от размера
+int text_supplement(char *argv[], std::vector <unsigned char> &init_text, const std::vector <char> c_fl);//Вызов дополнения в зависимости от режима
+void suplement(int one_pos, std::vector <unsigned long long> &text);
+
+void ofb_enc(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key,
+            std::vector <unsigned long long> R);
+void ofb_dec(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key,
+            std::vector <unsigned long long> R);
+void ofb(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key, char *argv[]);
+
+unsigned int file_check(std::ifstream &in);
+size_t choise(char c);
+void IVread(const std::vector <char> &c_fl, char *(&read_ptr), std::vector <unsigned long long> &IV);
+
+void ctr_enc(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key,
+            std::vector <unsigned long long> CTR);
+void ctr_dec(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key,
+            std::vector <unsigned long long> CTR);
+void ctr(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key, char *argv[]);
+
+void ecb(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key);
+
+void cbc_enc(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key,
+            std::vector <unsigned long long> R);
+
+void cbc_dec(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key,
+            std::vector <unsigned long long> R);
+
+void cbc(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key, char *argv[]);
+
+void cfb_dec(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key,
+            std::vector <unsigned long long> R);
+
+void cfb_enc(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key,
+            std::vector <unsigned long long> R);
+
+void cfb(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key, char *argv[]);
+
+void mac(const std::vector <char> &c_fl,
+        const std::vector <unsigned long long> &text,
+        std::vector <unsigned long long> &ctext,
+        std::vector <unsigned long long> &etext,
+        const std::vector <unsigned int> &key, char *argv[], int mack);
+
+void K_func(const std::vector <unsigned long long> &R, unsigned long long &K1,
+                          unsigned long long &K2, unsigned long long &Kl);
+
+void action(const std::vector <char> &c_fl,
+            const std::vector <unsigned long long> &text,
+            std::vector <unsigned long long> &ctext,
+            std::vector <unsigned long long> &etext,
+            const std::vector <unsigned int> &key, char *argv[], int mack);
