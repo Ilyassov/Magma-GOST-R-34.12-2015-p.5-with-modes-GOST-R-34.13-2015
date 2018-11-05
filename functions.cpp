@@ -1,7 +1,7 @@
 #include "headers.h"
 
 void keyForm(std::vector <unsigned int> &Key) { //Развертывание ключа
-  Key.resize(32);
+  Key.resize(33);
   for (size_t i = 1; i <= 8; i++) {
     Key[i+8]  = Key[i];
     Key[i+16] = Key[i];
@@ -140,8 +140,8 @@ void check_args(int argc, char *argv[], std::vector <char> &c_fl) {
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-unsigned int search(char* argv[], const std::string &flag) {
-  for (size_t i = 1; i < 14; i++) {
+unsigned int search(char* argv[], const std::string &flag, int argc) {
+  for (int i = 1; i < argc; i++) {
     if (argv[i] == flag) {
       return i+1;
     }
@@ -175,9 +175,10 @@ void keyRead(std::vector <unsigned int> &key, const char* file) {
   in.close();
 }
 
-void keyProcess(unsigned int &pos, std::vector <unsigned int> &key, char* argv[]) {
-  if ((pos = search(argv, "-k"))) {
+void keyProcess(unsigned int &pos, std::vector <unsigned int> &key, char* argv[], int argc) {
+  if ((pos = search(argv, "-k", argc))) {
     keyRead(key, argv[pos]);
+    keyForm(key);
   } else {
     throw "No key flag found!\n";
   }
@@ -185,19 +186,18 @@ void keyProcess(unsigned int &pos, std::vector <unsigned int> &key, char* argv[]
 
 void full_init_text(const char *read_ptr, std::vector <unsigned char> &init_text) { //Выполняет побайтовое бинарное считывание
   unsigned char ch;
-  std::ifstream in(read_ptr, std::ios::binary);
-  in.seekg (0, in.end);
-  unsigned int length = in.tellg();
-  in.seekg (0, in.beg);
-  for (size_t i = 0; i < length; i++) {
-    in.read((char*)&ch, sizeof(ch));
-    init_text.push_back(ch);
+  FILE *fp = freopen(read_ptr, "rb", stdin);
+  if (fp) {
+    while ((scanf("%c", &ch)) != EOF) {
+      init_text.push_back((((unsigned int)ch << 24) >> 24));
+    }
+  } else {
+    throw "File not opened\n";
   }
-  in.close();
 }
 
-void input_redirect(char *(&read_ptr), unsigned int &pos, char *argv[]) { //Если нужно перенаправляет поток входа на файл
-  if ((pos = search(argv, "-i"))) {
+void input_redirect(char *(&read_ptr), unsigned int &pos, char *argv[], int argc) { //Если нужно перенаправляет поток входа на файл
+  if ((pos = search(argv, "-i", argc))) {
     read_ptr = argv[pos];
   }
 }
@@ -208,7 +208,7 @@ void full_text(const std::vector <unsigned char> &init_text, std::vector <unsign
   while (j < init_text.size()) {
     unsigned long long temp = 0;
     for (size_t i = 0; i < 8; i++) {
-      temp = (temp <<  8) + (unsigned int)init_text[j];
+      temp = (temp << 8) + init_text[j];
       j++;
     }
     text.push_back(temp);
@@ -228,31 +228,18 @@ void one_supplement(char *argv[], std::vector <unsigned char> &init_text) {
 
 void smart_supplement(char *argv[], std::vector <unsigned char> &init_text) {
   if ((init_text.size() % 8) != 0) {
-    init_text.push_back((1 << 7));
+    init_text.push_back(((unsigned char)(1 << 7)));
   }
   zero_supplement(argv, init_text);
 }
 
-int text_supplement(char *argv[], std::vector <unsigned char> &init_text, const std::vector <char> c_fl) {
+void text_supplement(char *argv[], std::vector <unsigned char> &init_text, const std::vector <char> c_fl) {
   if ((c_fl[3] + c_fl[4] + c_fl[6]) == 1) { //режимы CTR, OFB и CFB
     zero_supplement(argv, init_text);
   } else if ((c_fl[2] + c_fl[5]) == 1) { //режимы ECB и CBC
-    int one_pos = init_text.size() % 8;
-    zero_supplement(argv, init_text);
-    return one_pos;
+    one_supplement(argv, init_text);
   } else { //режим MAC
     smart_supplement(argv, init_text);
-  }
-  return -1;
-}
-
-void suplement(int one_pos, std::vector <unsigned long long> &text) {
-  if (one_pos != -1) {
-    if (one_pos) {
-      text[text.size()-1] = text[text.size()-1] + (((unsigned long long)(1 << 7)) << (56 - 8 * one_pos)); //Ставим 1 сразу после последнего считанного байта
-    } else if (one_pos == 0) {
-      text.push_back(0x8000000000000000);
-    }
   }
 }
 
@@ -270,7 +257,6 @@ void ecb(const std::vector <char> &c_fl,
         G(key[j], a1, a0);
       }
       ctext[i] = (( ((unsigned long long)g(key[32], a0)) ^ a1) << 32) + a0;
-      std::cout << std::hex << text[i] << " " << ctext[i] << std::endl;
     }
   } else if (c_fl[9]) { //decrypt
     for (size_t i = 0; i < text.size(); i++) {
@@ -363,10 +349,10 @@ void ctr(const std::vector <char> &c_fl,
             const std::vector <unsigned long long> &text,
             std::vector <unsigned long long> &ctext,
             std::vector <unsigned long long> &etext,
-            const std::vector <unsigned int> &key, char *argv[]) {
+            const std::vector <unsigned int> &key, char *argv[], int argc) {
   std::vector <unsigned long long> IV;   //Ключ для режима ctr
   unsigned int pos;
-  if ((pos = search(argv, "-v"))) {
+  if ((pos = search(argv, "-v", argc))) {
     IVread(c_fl, argv[pos], IV);
   } else {
     IV.push_back(0);
@@ -429,10 +415,10 @@ void ofb(const std::vector <char> &c_fl,
             const std::vector <unsigned long long> &text,
             std::vector <unsigned long long> &ctext,
             std::vector <unsigned long long> &etext,
-            const std::vector <unsigned int> &key, char *argv[]) {
+            const std::vector <unsigned int> &key, char *argv[], int argc) {
   std::vector <unsigned long long> IV;
   unsigned int pos;
-  if ((pos = search(argv, "-v"))) {
+  if ((pos = search(argv, "-v", argc))) {
     IVread(c_fl, argv[pos], IV);
   } else {
     IV.push_back(0);
@@ -486,10 +472,10 @@ void cbc(const std::vector <char> &c_fl,
             const std::vector <unsigned long long> &text,
             std::vector <unsigned long long> &ctext,
             std::vector <unsigned long long> &etext,
-            const std::vector <unsigned int> &key, char *argv[]) {
+            const std::vector <unsigned int> &key, char *argv[], int argc) {
   std::vector <unsigned long long> IV;
   unsigned int pos;
-  if ((pos = search(argv, "-v"))) {
+  if ((pos = search(argv, "-v", argc))) {
     IVread(c_fl, argv[pos], IV);
   } else {
     IV.push_back(0);
@@ -547,10 +533,10 @@ void cfb(const std::vector <char> &c_fl,
         const std::vector <unsigned long long> &text,
         std::vector <unsigned long long> &ctext,
         std::vector <unsigned long long> &etext,
-        const std::vector <unsigned int> &key, char *argv[]) {
+        const std::vector <unsigned int> &key, char *argv[], int argc) {
   std::vector <unsigned long long> IV;
   unsigned int pos;
-  if ((pos = search(argv, "-v"))) {
+  if ((pos = search(argv, "-v", argc))) {
     IVread(c_fl, argv[pos], IV);
   } else {
     IV.push_back(0);
@@ -616,21 +602,55 @@ void action(const std::vector <char> &c_fl,
             const std::vector <unsigned long long> &text,
             std::vector <unsigned long long> &ctext,
             std::vector <unsigned long long> &etext,
-            const std::vector <unsigned int> &key, char *argv[], int mack) {
+            const std::vector <unsigned int> &key, char *argv[], int mack, int argc) {
   if (c_fl[2]) {
     ecb(c_fl, text, ctext, etext, key);
   } else if (c_fl[3]) {
-    ctr(c_fl, text, ctext, etext, key, argv);
+    ctr(c_fl, text, ctext, etext, key, argv, argc);
   } else if (c_fl[4]) {
-    ofb(c_fl, text, ctext, etext, key, argv);
+    ofb(c_fl, text, ctext, etext, key, argv, argc);
   } else if (c_fl[5]) {
-    cbc(c_fl, text, ctext, etext, key, argv);
+    cbc(c_fl, text, ctext, etext, key, argv, argc);
   } else if (c_fl[6]) {
-    cfb(c_fl, text, ctext, etext, key, argv);
+    cfb(c_fl, text, ctext, etext, key, argv, argc);
   } else if (c_fl[7]) {
     mac(c_fl, text, ctext, etext, key, argv, mack);
   } else {
     throw "Wrong mode!\n";
   }
+}
 
+void make_ans_text(std::vector <unsigned char> &ans_text,
+                std::vector <unsigned long long> &ctext,
+                std::vector <unsigned long long> &etext,
+                const std::vector <char> &c_fl) {
+  std::vector <unsigned long long> TEXT;
+  if (c_fl[8]) {
+    TEXT = ctext;
+  } else {
+    TEXT = etext;
+  }
+  for (size_t i = 0; i < TEXT.size(); i++) {
+    for (size_t j = 0; j < 8; j++) {
+      ans_text.push_back((((TEXT[i]) << j*8) >> 56));
+    }
+  }
+}
+
+void print_ans(const std::vector <unsigned char> &ans_text, char *argv[], int argc) {
+  unsigned int pos;
+  pos = search(argv, "-o", argc);
+  char *file = NULL;
+  if (pos) {
+    file = argv[pos];
+  }
+  FILE *ptrFile = freopen(file, "wb", stdout);
+  if (ptrFile) {
+    for (size_t i = 0; i < ans_text.size(); i++) {
+      printf("%c", ans_text[i]); // записать в файл содержимое буфера
+    }
+    fclose(ptrFile);
+  } else {
+    throw "File not opened!\n";
+  }
 }

@@ -7,24 +7,23 @@ int main (int argc, char *argv[]) {
     std::vector <unsigned long long> text;  //Вектор для хранения текста по 8 байт
     std::vector <unsigned long long> ctext; //Вектор для хранения зашифрованного текста по 8 байт
     std::vector <unsigned long long> etext; //Вектор для хранения расшифрованного текста по 8 байт
-    ctext.resize(text.size());
-    etext.resize(ctext.size());
     std::vector <unsigned char> init_text;           //Вектор для хранения текста по 1 байту
+    std::vector <unsigned char> ans_text;
     char *read_ptr = NULL;
     unsigned int pos;
     std::vector <unsigned int> key;         //Вектор ключей
     key.push_back(0);
-    keyProcess(pos, key, argv);
-    input_redirect(read_ptr, pos, argv);
+    keyProcess(pos, key, argv, argc);
+    input_redirect(read_ptr, pos, argv, argc);
     full_init_text(read_ptr, init_text);
     unsigned int mack = init_text.size() % 8;
-    int one_pos = text_supplement(argv, init_text, c_fl);
+    text_supplement(argv, init_text, c_fl);
     full_text(init_text, text);
-    suplement(one_pos, text);
-    for(size_t i = 0; i < text.size(); i++) {
-      std::cout << std::hex << text[i] << std::endl;
-    }
-    action(c_fl, text, ctext, etext, key, argv, mack);
+    ctext.resize(text.size());
+    etext.resize(ctext.size());
+    action(c_fl, text, ctext, etext, key, argv, mack, argc);
+    make_ans_text(ans_text, ctext, etext, c_fl);
+    print_ans(ans_text, argv, argc);
   }
   catch (const char * S) {
     std::cerr << S << help;

@@ -44,21 +44,21 @@ void check_file_flag_pos(int argc, char *argv[]);//Проверяет позиц
 void check_enc_dec(int argc, char *argv[], const std::vector <char> &c_fl);
 void check_args(int argc, char *argv[], std::vector <char> &c_fl);  //Проверяет входные аргументы командной строки
 
-unsigned int search(char* argv[], const std::string &flag);
+unsigned int search(char* argv[], const std::string &flag, int argc);
 void keySizeCheck(const char* file);
 void keyRead(std::vector <unsigned int> &key, const char* file);  //Считывание ключа
-void keyProcess(unsigned int &pos, std::vector <unsigned int> &key, char* argv[]);
+void keyProcess(unsigned int &pos, std::vector <unsigned int> &key, char* argv[], int argc);
 
 void full_init_text(const char *read_ptr, std::vector <unsigned char> &init_text); //Выполняет побайтовое бинарное считывание
-void input_redirect(char *(&read_ptr), unsigned int &pos, char *argv[]);//Если нужно перенаправляет поток входа на файл
+void input_redirect(char *(&read_ptr), unsigned int &pos, char *argv[], int argc);//Если нужно перенаправляет поток входа на файл
 unsigned long long swap(unsigned long long temp); //Меняет байты местами в правильный порядок
 void full_text(const std::vector <unsigned char> &init_text, std::vector <unsigned long long> &text); //Заполняет текст по байтам
                                                                                                     //находящимся в init_text
 void zero_supplement(char *argv[], std::vector <unsigned char> &init_text); //Дополнение нулями
 void one_supplement(char *argv[], std::vector <unsigned char> &init_text);  //Дополнение единицей и нулями
 void smart_supplement(char *argv[], std::vector <unsigned char> &init_text);//Дополнение в зависимости от размера
-int text_supplement(char *argv[], std::vector <unsigned char> &init_text, const std::vector <char> c_fl);//Вызов дополнения в зависимости от режима
-void suplement(int one_pos, std::vector <unsigned long long> &text);
+void text_supplement(char *argv[], std::vector <unsigned char> &init_text, const std::vector <char> c_fl);//Вызов дополнения в зависимости от режима
+//void suplement(int one_pos, std::vector <unsigned long long> &text);
 
 void ofb_enc(const std::vector <char> &c_fl,
             const std::vector <unsigned long long> &text,
@@ -76,7 +76,12 @@ void ofb(const std::vector <char> &c_fl,
             const std::vector <unsigned long long> &text,
             std::vector <unsigned long long> &ctext,
             std::vector <unsigned long long> &etext,
-            const std::vector <unsigned int> &key, char *argv[]);
+            const std::vector <unsigned int> &key, char *argv[], int argc);
+
+void make_ans_text(std::vector <unsigned char> &ans_text,
+                std::vector <unsigned long long> &ctext,
+                std::vector <unsigned long long> &etext,
+                const std::vector <char> &c_fl);
 
 unsigned int file_check(std::ifstream &in);
 size_t choise(char c);
@@ -98,7 +103,7 @@ void ctr(const std::vector <char> &c_fl,
             const std::vector <unsigned long long> &text,
             std::vector <unsigned long long> &ctext,
             std::vector <unsigned long long> &etext,
-            const std::vector <unsigned int> &key, char *argv[]);
+            const std::vector <unsigned int> &key, char *argv[], int argc);
 
 void ecb(const std::vector <char> &c_fl,
             const std::vector <unsigned long long> &text,
@@ -124,7 +129,7 @@ void cbc(const std::vector <char> &c_fl,
             const std::vector <unsigned long long> &text,
             std::vector <unsigned long long> &ctext,
             std::vector <unsigned long long> &etext,
-            const std::vector <unsigned int> &key, char *argv[]);
+            const std::vector <unsigned int> &key, char *argv[], int argc);
 
 void cfb_dec(const std::vector <char> &c_fl,
             const std::vector <unsigned long long> &text,
@@ -144,7 +149,7 @@ void cfb(const std::vector <char> &c_fl,
             const std::vector <unsigned long long> &text,
             std::vector <unsigned long long> &ctext,
             std::vector <unsigned long long> &etext,
-            const std::vector <unsigned int> &key, char *argv[]);
+            const std::vector <unsigned int> &key, char *argv[], int argc);
 
 void mac(const std::vector <char> &c_fl,
         const std::vector <unsigned long long> &text,
@@ -159,4 +164,6 @@ void action(const std::vector <char> &c_fl,
             const std::vector <unsigned long long> &text,
             std::vector <unsigned long long> &ctext,
             std::vector <unsigned long long> &etext,
-            const std::vector <unsigned int> &key, char *argv[], int mack);
+            const std::vector <unsigned int> &key, char *argv[], int mack, int argc);
+
+            void print_ans(const std::vector <unsigned char> &ans_text, char *argv[], int argc);
