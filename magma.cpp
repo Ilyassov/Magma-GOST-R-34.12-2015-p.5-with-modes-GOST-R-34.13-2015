@@ -7,16 +7,29 @@ int main (int argc, char *argv[]) {
     std::vector <unsigned long long> text;  //Вектор для хранения текста по 8 байт
     std::vector <unsigned long long> ctext; //Вектор для хранения зашифрованного текста по 8 байт
     std::vector <unsigned long long> etext; //Вектор для хранения расшифрованного текста по 8 байт
+    std::vector <unsigned char> init_text;           //Вектор для хранения текста по 1 байту
+    char *read_ptr = NULL;
     unsigned int pos;
     std::vector <unsigned int> key;         //Вектор ключей
     key.push_back(0);
     keyProcess(pos, key, argv);
+    input_redirect(read_ptr, pos, argv);
+    full_init_text(read_ptr, init_text);
 
-    char *read_ptr = NULL;
-    if ((pos = search(argv, "-v"))) {
-      read_ptr = argv[pos];
+
+    size_t j = 0;
+    while (j != init_text.size()) {
+      unsigned long temp = 0;
+      for (size_t i = 0; i < 8; i++) {
+        temp = (temp <<  8) + (unsigned int)init_text[j];
+        j++;
+      }
+      text.push_back(temp);
     }
-    FILE * ptrFile = freopen(read_ptr, "rb", stdin);
+    for (size_t i = 0; i < text.size(); i++) {
+      std::cout << std::hex << text[i] << std::endl;
+    }
+
     //-i <input file> – входной файл. По умолчанию читать с stdin до EOF;
 //    ctext.resize(text.size());
 //    etext.resize(ctext.size());
@@ -185,3 +198,11 @@ int main (int argc, char *argv[]) {
   }
   return 0;
 }
+
+//FILE * ptrFile = freopen(read_ptr, "rb", stdin);
+/*char ch;
+while ((ch = fgetc(ptrFile))) {
+init_text.push_back(ch);
+std::cout << std::hex << int(ch);
+}
+fclose(ptrFile);*/

@@ -182,3 +182,25 @@ void keyProcess(unsigned int &pos, std::vector <unsigned int> &key, char* argv[]
     throw "No key flag found!\n";
   }
 }
+
+void full_init_text(const char *read_ptr, std::vector <unsigned char> &init_text) {
+  unsigned char ch;
+  size_t j = 0;
+  std::ifstream in(read_ptr, std::ios::in | std::ios::binary);
+  in.seekg (0, in.end);
+  unsigned int length = in.tellg();
+  std::cout << length << std::endl;
+  in.seekg (0, in.beg);
+  while (j != length) {
+    in.read((char*)&ch, sizeof(ch));
+    init_text.push_back(ch);
+    j++;
+  }
+  in.close();
+}
+
+void input_redirect(char *(&read_ptr), unsigned int &pos, char *argv[]) {
+  if ((pos = search(argv, "-v"))) {
+    read_ptr = argv[pos];
+  }
+}

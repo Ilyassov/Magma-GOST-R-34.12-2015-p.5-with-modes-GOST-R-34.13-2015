@@ -1,6 +1,5 @@
 #pragma once
 
-#include <fstream>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -49,3 +48,6 @@ unsigned int search(char* argv[], const std::string &flag);
 void keySizeCheck(const char* file);
 void keyRead(std::vector <unsigned int> &key, const char* file);  //Считывание ключа
 void keyProcess(unsigned int &pos, std::vector <unsigned int> &key, char* argv[]);
+
+void full_init_text(const char *read_ptr, std::vector <unsigned char> &init_text);
+void input_redirect(char *(&read_ptr), unsigned int &pos, char *argv[]);
