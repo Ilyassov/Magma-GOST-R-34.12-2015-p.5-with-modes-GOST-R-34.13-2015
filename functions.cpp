@@ -236,7 +236,7 @@ void smart_supplement(char *argv[], std::vector <unsigned char> &init_text) {
 void text_supplement(char *argv[], std::vector <unsigned char> &init_text, const std::vector <char> c_fl) {
   if ((c_fl[3] + c_fl[4] + c_fl[6]) == 1) { //режимы CTR, OFB и CFB
     zero_supplement(argv, init_text);
-  } else if ((c_fl[2] + c_fl[5]) == 1) { //режимы ECB и CBC
+  } else if ((c_fl[2] + c_fl[5]) == 1) { //режимы ECB и
     one_supplement(argv, init_text);
   } else { //режим MAC
     smart_supplement(argv, init_text);
