@@ -122,10 +122,10 @@ void is_there_k(int argc, char *argv[]) {
 }
 
 void check_enc_dec(int argc, char *argv[], const std::vector <char> &c_fl) {
-  if ((c_fl[8] + c_fl[9]) == 0) {
+  if (((c_fl[8] + c_fl[9]) == 0) && (!c_fl[7])) {
     throw "Choose mode : encrypt or decrypt!\n";
-  } else if ((c_fl[7] + c_fl[9]) > 1) {
-    throw "Mac mode has no encryption!\n";
+  } else if ((c_fl[7] + c_fl[9] + c_fl[8]) > 1) {
+    throw "Mac mode has no encryption and decryption modes!\n";
   } else if ((c_fl[2] + c_fl[7] + c_fl[11]) > 3) {
     throw "IV not needed in ecb or mac modes!\n";
   }
@@ -551,7 +551,7 @@ void cfb(const std::vector <char> &c_fl,
 }
 
 void K_func(const std::vector <unsigned long long> &R, unsigned long long &K1,
-                          unsigned long long &K2, unsigned long long &Kl, int mack) {
+            unsigned long long &K2, unsigned long long &Kl, int mack) {
   K1 = R[0] << 1;
   if (((R[0] << 1) >> 1) != R[0]) {
     K1 = K1 ^ 0x000000000000001b;
@@ -561,7 +561,7 @@ void K_func(const std::vector <unsigned long long> &R, unsigned long long &K1,
     K2 = K1 ^ 0x000000000000001b;
   }
   if (mack) {
-    Kl = K2;  //Если длниа совпадает с n
+    Kl = K2;  //Если длина совпадает с n
   } else {
     Kl = K1;
   }
@@ -573,8 +573,7 @@ void mac(const std::vector <char> &c_fl,
         std::vector <unsigned long long> &etext,
         const std::vector <unsigned int> &key, char *argv[], int mack) {
   std::vector <unsigned long long> R;
-  std::vector <unsigned long long> C;
-  C.push_back(0);
+  std::vector <unsigned long long> C(1, 0);
   unsigned int text_size_1 = text.size()-1; //Завел чтобы не считать по нескольку раз
   unsigned int a0 = 0, a1 = 0;
   unsigned long long K1, K2, Kl;
@@ -591,7 +590,8 @@ void mac(const std::vector <char> &c_fl,
   a1 = MAC_inp >> 32;
   a0 = (MAC_inp << 32) >> 32;
   unsigned int MAC = (unsigned int)(enc(key, a1, a0) >> 32);
-  etext.push_back((unsigned long long)MAC);
+  etext.resize(1);
+  etext[0] = (unsigned long long)MAC;
 }
 
 void action(const std::vector <char> &c_fl,
@@ -621,7 +621,7 @@ void make_ans_text(std::vector <unsigned char> &ans_text,
                 std::vector <unsigned long long> &etext,
                 const std::vector <char> &c_fl) {
   std::vector <unsigned long long> TEXT;
-  if (c_fl[8]) {
+  if (c_fl[8] && !c_fl[7]) {
     TEXT = ctext;
   } else {
     TEXT = etext;
