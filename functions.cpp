@@ -126,7 +126,7 @@ void check_enc_dec(int argc, char *argv[], const std::vector <char> &c_fl) {
     throw "Choose mode : encrypt or decrypt!\n";
   } else if ((c_fl[7] + c_fl[9]) > 1) {
     throw "Mac mode has no encryption!\n";
-  } else if (c_fl[2] + c_fl[7] + c_fl[11] > 1) {
+  } else if ((c_fl[2] + c_fl[7] + c_fl[11]) > 3) {
     throw "IV not needed in ecb or mac modes!\n";
   }
 }
@@ -287,7 +287,7 @@ void IVread(const std::vector <char> &c_fl, char *(&read_ptr), std::vector <unsi
   unsigned char ch;
   std::ifstream in(read_ptr, std::ios::binary);
   unsigned int length = file_check(in);
-  if ((c_fl[3] && (length != 4)) || ((length % 8) != 0))
+  if ((c_fl[3] && (length != 4)) || ((length % 4) != 0))
     throw "Wrong CTR size!\n";
   size_t j = 0;
   size_t k = choise(c_fl[3]);
@@ -321,9 +321,6 @@ void ctr_enc(const std::vector <char> &c_fl,
     }
     ctext[i] = (( ((unsigned long long)g(key[32], a0)) ^ a1) << 32) + a0;
     ctext[i] = text[i] ^ ((ctext[i] >> (64-s)) << (64-s));
-    etext[i] = (( ((unsigned long long)g(key[32], a0)) ^ a1) << 32) + a0;
-    etext[i] = ctext[i] ^ ((etext[i] >> (64-s)) << (64-s));
-    std::cout << "Text  " << std::hex << text[i] << " CText " << ctext[i] << " " << (text[i] == etext[i]) << std::endl;
   }
 }
 
@@ -337,6 +334,7 @@ void ctr_dec(const std::vector <char> &c_fl,
     unsigned int a0, a1;       //Значения текста на текущей итерации
     a1 = CTR[i] >> 32;         //Значение первой переменной для первого шага
     a0 = (CTR[i] << 32) >> 32; //Значение второй переменной для первого шага
+    ctext[i] = text[i];
     for (size_t j = 1; j < 32; j++) {
       G(key[j], a1, a0);
     }
@@ -350,7 +348,7 @@ void ctr(const std::vector <char> &c_fl,
             std::vector <unsigned long long> &ctext,
             std::vector <unsigned long long> &etext,
             const std::vector <unsigned int> &key, char *argv[], int argc) {
-  std::vector <unsigned long long> IV;   //Ключ для режима ctr
+  std::vector <unsigned long long> IV;
   unsigned int pos;
   if ((pos = search(argv, "-v", argc))) {
     IVread(c_fl, argv[pos], IV);
