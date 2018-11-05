@@ -515,13 +515,11 @@ void cfb_enc(const std::vector <char> &c_fl,
             std::vector <unsigned long long> &etext,
             const std::vector <unsigned int> &key,
             std::vector <unsigned long long> R) {
-  unsigned long long temp = 0;
   for (size_t i = 0; i < text.size(); i++) {  //Пример работы orb
-    unsigned int a0, a1;        //Значения текста на текущей итерации
-    a1 = (R[i]) >> 32;         //Значение первой переменной для первого шага
-    a0 = ((R[i]) << 32) >> 32; //Значение второй переменной для первого шага
-    temp = enc(key, a1, a0);
-    ctext[i] = text[i] ^ temp;
+    unsigned int a0, a1;
+    a1 = (R[i]) >> 32;
+    a0 = ((R[i]) << 32) >> 32;
+    ctext[i] = (text[i] ^ (enc(key, a1, a0)));
     R.push_back(ctext[i]);
   }
 
@@ -544,9 +542,9 @@ void cfb(const std::vector <char> &c_fl,
     R.push_back(IV[j]);
   }
   if (c_fl[8]) {
-    cbc_enc(c_fl, text, ctext, etext, key, R);
+    cfb_enc(c_fl, text, ctext, etext, key, R);
   } else if (c_fl[9]) {
-    cbc_dec(c_fl, text, ctext, etext, key, R);
+    cfb_dec(c_fl, text, ctext, etext, key, R);
   } else {
     throw "CFB Error!\n";
   }
